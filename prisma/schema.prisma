@@ -1,0 +1,129 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model User {
+  id          String   @id @default(cuid())
+  username    String   @unique
+  password    String
+  name        String
+  department  String
+  role        String
+  status      String
+  lastLoginAt DateTime?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model AuditLog {
+  id         String   @id @default(cuid())
+  module     String
+  action     String
+  objectType String
+  objectId   String?
+  operator   String
+  result     String
+  summary    String
+  createdAt  DateTime @default(now())
+}
+
+model SystemSetting {
+  id          String   @id @default(cuid())
+  groupName   String
+  key         String   @unique
+  value       String
+  type        String
+  enabled     Boolean  @default(true)
+  description String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model ReviewProject {
+  id             String   @id @default(cuid())
+  projectCode    String   @unique
+  projectName    String
+  specialty      String
+  stage          String
+  reviewStatus   String
+  riskLevel      String
+  location       String
+  ownerDept      String
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+}
+
+model TechnicalDocument {
+  id                 String   @id @default(cuid())
+  projectCode        String
+  projectName        String
+  documentName       String
+  documentType       String
+  specialty          String
+  phase              String
+  currentVersion     String
+  textErrorCount     Int
+  complianceHitCount Int
+  optimizationCount  Int
+  reviewStatus       String
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+}
+
+model ComplianceRule {
+  id          String   @id @default(cuid())
+  ruleCode    String   @unique
+  specialty   String
+  ruleName    String
+  sourceName  String
+  severity    String
+  checkPoint  String
+  enabled     Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model ReviewIssue {
+  id              String   @id @default(cuid())
+  projectCode     String
+  projectName     String
+  documentName    String
+  specialty       String
+  issueCategory   String
+  issueLevel      String
+  pointLocation   String
+  issueSummary    String
+  suggestion      String
+  status          String
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
+model ReviewReport {
+  id               String   @id @default(cuid())
+  reportCode       String   @unique
+  projectCode      String
+  projectName      String
+  phase            String
+  overallConclusion String
+  issueCount       Int
+  majorIssueCount  Int
+  recommendation   String
+  status           String
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+}
+
+model ReviewConversation {
+  id        String   @id @default(cuid())
+  scene     String
+  role      String
+  stage     String
+  content   String
+  createdAt DateTime @default(now())
+}
