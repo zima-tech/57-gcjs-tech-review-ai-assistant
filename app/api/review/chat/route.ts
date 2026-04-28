@@ -1,10 +1,17 @@
 import { NextResponse } from 'next/server';
 
+import { requireApiUser } from '@/lib/auth';
 import { generateReviewAssistantReply } from '@/lib/ai';
 import { prisma } from '@/lib/prisma';
 import { writeAuditLog } from '@/lib/services';
 
 export async function POST(request: Request) {
+  const auth = await requireApiUser();
+
+  if (auth.response) {
+    return auth.response;
+  }
+
   const payload = await request.json();
 
   if (!payload.scene || !payload.prompt) {

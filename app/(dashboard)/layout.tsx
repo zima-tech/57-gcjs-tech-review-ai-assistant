@@ -1,9 +1,22 @@
+import { requireCurrentUser } from '@/lib/auth';
 import { DashboardShell } from '@/components/dashboard/dashboard-shell';
 
-export default function DashboardLayout({
+export default async function DashboardLayout({
   children
 }: {
   children: React.ReactNode;
 }) {
-  return <DashboardShell>{children}</DashboardShell>;
+  const user = await requireCurrentUser();
+
+  return (
+    <DashboardShell
+      currentUser={{
+        username: user.username,
+        name: user.name,
+        role: user.role
+      }}
+    >
+      {children}
+    </DashboardShell>
+  );
 }
