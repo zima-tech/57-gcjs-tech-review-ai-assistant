@@ -4,7 +4,7 @@ import { AuditOutlined, DashboardOutlined, FileDoneOutlined, FileSearchOutlined,
 import { App, Avatar, Button, Layout, Menu, Space, Tag, Typography } from 'antd';
 import type { MenuProps } from 'antd';
 import { usePathname, useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { useEffect, useMemo, useState, useTransition } from 'react';
 
 const items: NonNullable<MenuProps['items']> = [
   { key: '/dashboard', icon: <DashboardOutlined />, label: '审查总览' },
@@ -36,12 +36,14 @@ export function DashboardShell({
   const pathname = usePathname();
   const router = useRouter();
   const [loggingOut, setLoggingOut] = useState(false);
+  const [isNavigating, startNavigation] = useTransition();
   const { message } = App.useApp();
 
-  const visibleItems =
-    currentUser.role === '管理员'
-      ? items
-      : items.filter((item) => {
+  const visibleItems = useMemo(
+    () =>
+      currentUser.role === '管理员'
+        ? items
+        : items.filter((item) => {
           if (!item) {
             return false;
           }
@@ -51,7 +53,27 @@ export function DashboardShell({
           }
 
           return !('key' in item) || !adminOnlyKeys.has(String(item.key));
-        });
+        }),
+    [currentUser.role]
+  );
+
+  useEffect(() => {
+    visibleItems.forEach((item) => {
+      if (item && 'key' in item && typeof item.key === 'string' && item.key !== pathname) {
+        router.prefetch(item.key);
+      }
+    });
+  }, [pathname, router, visibleItems]);
+
+  function navigate(key: string) {
+    if (key === pathname || isNavigating) {
+      return;
+    }
+
+    startNavigation(() => {
+      router.push(key);
+    });
+  }
 
   async function logout() {
     setLoggingOut(true);
@@ -80,8 +102,9 @@ export function DashboardShell({
           mode="inline"
           selectedKeys={[pathname || '/dashboard']}
           items={visibleItems}
+          disabled={isNavigating}
           style={{ background: 'transparent', borderInlineEnd: 'none' }}
-          onClick={({ key }) => router.push(key)}
+          onClick={({ key }) => navigate(key)}
         />
       </aside>
       <section className="dashboard-content">
