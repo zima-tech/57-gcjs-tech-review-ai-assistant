@@ -84,8 +84,9 @@ export function DashboardShell({
   }
 
   return (
-    <Layout className="dashboard-layout">
-      <aside className="dashboard-sidebar" style={{ background: 'linear-gradient(180deg, #16324a 0%, #0f5f8c 100%)' }}>
+    <Layout className={`dashboard-layout${isNavigating ? ' is-navigating' : ''}`}>
+      <div className="route-progress" />
+      <aside className="dashboard-sidebar">
         <div className="dashboard-brand">
           <Tag color="blue" style={{ marginBottom: 12 }}>
             工程建设部

@@ -27,13 +27,13 @@ export async function writeAuditLog(params: {
 
 export async function getReviewSnapshot() {
   const [projects, documents, rules, issues, reports, conversations, logs] = await Promise.all([
-    prisma.reviewProject.findMany({ orderBy: { createdAt: 'desc' } }),
-    prisma.technicalDocument.findMany({ orderBy: { updatedAt: 'desc' } }),
-    prisma.complianceRule.findMany({ orderBy: [{ specialty: 'asc' }, { ruleCode: 'asc' }] }),
-    prisma.reviewIssue.findMany({ orderBy: { createdAt: 'desc' } }),
-    prisma.reviewReport.findMany({ orderBy: { createdAt: 'desc' } }),
-    prisma.reviewConversation.findMany({ orderBy: { createdAt: 'asc' } }),
-    prisma.auditLog.findMany({ orderBy: { createdAt: 'desc' }, take: 30 })
+    prisma.reviewProject.findMany({ orderBy: { createdAt: 'desc' }, take: 60 }),
+    prisma.technicalDocument.findMany({ orderBy: { updatedAt: 'desc' }, take: 80 }),
+    prisma.complianceRule.findMany({ orderBy: [{ specialty: 'asc' }, { ruleCode: 'asc' }], take: 80 }),
+    prisma.reviewIssue.findMany({ orderBy: { createdAt: 'desc' }, take: 100 }),
+    prisma.reviewReport.findMany({ orderBy: { createdAt: 'desc' }, take: 60 }),
+    prisma.reviewConversation.findMany({ orderBy: { createdAt: 'asc' }, take: 80 }),
+    prisma.auditLog.findMany({ orderBy: { createdAt: 'desc' }, take: 12 })
   ]);
 
   return { projects, documents, rules, issues, reports, conversations, logs };
